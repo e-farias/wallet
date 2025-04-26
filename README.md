@@ -1,54 +1,84 @@
-# Wallet
->
-> A wallet fullstack web app. Made with TypeScript, Next.js, Prisma &amp; ☕.
+# Turborepo starter
 
-<br>
+This Turborepo starter is maintained by the Turborepo core team.
 
-## 📌 - Engines
+## Using this example
 
-Specific versions of engines, libraries, frameworks, plugins and other versioned tools.
+Run the following command:
 
-- **node**: v22.14.0
-- **pnpm**: 9.12.2
-- **docker**: 28.1.1
-- **docker-composer**: v2.11.2
+```sh
+npx create-turbo@latest
+```
 
-<br>
+## What's inside?
 
-## ⚙️ - Install
+This Turborepo includes the following packages/apps:
 
-- Clone this repositories
-- Install
+### Apps and Packages
 
-  ```bash
-  pnpm install
-  ```
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
 
-- Create your .env file from .env.example
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
 
-- Up services with docker-composer:
+### Utilities
 
-  ```bash
-  docker-compose build --no-cache && docker-compose --env-file .env up -dV
-  ```
+This Turborepo has some additional tools already setup for you:
 
-- Update database:
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
 
-  ```bash
-    pnpm db:update
-  ```
+### Build
 
-<br>
+To build all apps and packages, run the following command:
 
-## ▶️ - Run
+```
+cd my-turborepo
+pnpm build
+```
 
-- Run app via pnpm script
+### Develop
 
-  ```bash
-  pnpm dev
-  ```
+To develop all apps and packages, run the following command:
 
-## 🏗️ - Arch
+```
+cd my-turborepo
+pnpm dev
+```
 
-- The nice arch is in develop branch
-- Time spent on the project: 14hs
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+```
+cd my-turborepo
+npx turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+```
+npx turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turborepo.com/docs/core-concepts/monorepos/running-tasks)
+- [Caching](https://turborepo.com/docs/core-concepts/caching)
+- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.com/docs/core-concepts/monorepos/filtering)
+- [Configuration Options](https://turborepo.com/docs/reference/configuration)
+- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
