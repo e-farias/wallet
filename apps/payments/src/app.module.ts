@@ -1,8 +1,9 @@
-import { Module } from '@nestjs/common'
-import { validate } from './config/env.validation'
-
-import { ConfigModule } from '@nestjs/config'
+import { validate } from '@/config/env.validation'
 import path from 'path'
+
+import { Module } from '@nestjs/common'
+import { ConfigModule } from '@nestjs/config'
+import { TransactionsModule } from './transactions/transactions.module'
 
 @Module({
   imports: [
@@ -11,9 +12,8 @@ import path from 'path'
       isGlobal: true,
       validate,
     }),
+    TransactionsModule,
   ],
-  controllers: [],
-  providers: [],
 })
 
 export class AppModule {}

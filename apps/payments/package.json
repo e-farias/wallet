@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "payments",
   "private": true,
   "version": "1.0.0",
   "license": "MIT",
@@ -21,6 +21,7 @@
     "node": ">=20.0.0"
   },
   "dependencies": {
+    "@repo/database": "workspace:*",
     "@repo/lib": "workspace:*",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.1",

@@ -14,8 +14,9 @@ async function bootstrap() {
   )
 
   const configService = app.get(ConfigService<EnvironmentVariables>)
+  const port = configService.get<number>('PAYMENT_API_PORT')
   
-  await app.listen(configService.get<number>('API_PORT'))
+  await app.listen(port)
 }
 
 bootstrap()

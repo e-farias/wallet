@@ -27,7 +27,7 @@ importers:
         specifier: 5.8.2
         version: 5.8.2
 
-  apps/api:
+  apps/payments:
     dependencies:
       '@nestjs/common':
         specifier: ^11.0.1
@@ -44,6 +44,9 @@ importers:
       '@nestjs/typeorm':
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.0(@nestjs/common@11.1.0(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.0)(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2)(typeorm@0.3.22(reflect-metadata@0.2.2)(ts-node@10.9.2(@swc/core@1.11.22(@swc/helpers@0.5.17))(@types/node@22.15.2)(typescript@5.8.2)))
+      '@repo/database':
+        specifier: workspace:*
+        version: link:../../packages/database
       '@repo/lib':
         specifier: workspace:*
         version: link:../../packages/lib

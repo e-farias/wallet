@@ -5,7 +5,7 @@ export class EnvironmentVariables {
   @IsString()
   NODE_ENV: string
   @IsNumber()
-  API_PORT: number
+  PAYMENT_API_PORT: number
 
   @IsString()
   NEXT_PUBLIC_BASE_URL: string
