@@ -3,14 +3,22 @@ import { prisma } from "@repo/database"
 import { compare } from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import { getServerSession, type NextAuthOptions } from "next-auth"
+import { ONE_MONTH_IN_SECONDS } from '@repo/lib'
 
 // Types
 import {
   SessionAuthOptions,
-  TokenData
-} from "@/lib/types/next-auth"
+  TokenData,
+} from "@repo/lib/types/auth"
+import type {
+  JWT,
+  JWTEncodeParams,
+  JWTDecodeParams
+} from "next-auth/jwt"
 
 export const authOptions: NextAuthOptions = {
+  secret: process.env.AUTH_SECRET,
+  session: { strategy: "jwt" },
   providers: [
     CredentialsProvider({
       
@@ -50,11 +58,12 @@ export const authOptions: NextAuthOptions = {
           throw new Error('Senha inválida')
         }
 
-        const userFormated = {
+        const userFormated: SessionAuthOptions = {
           user: {
             id: user.id,
             name: user.name,
             email: user.email,
+            passwordEncrypted: user.password
           }
         }
 
@@ -63,19 +72,33 @@ export const authOptions: NextAuthOptions = {
     })
   ],
   callbacks: {
-    jwt: async ({ token, user }) => {
-      const userFormated = user as any as SessionAuthOptions
+    jwt: async ({ token, user, account }) => {
       if (user) {
-        token.user = userFormated.user
+        token.user = (user as any as SessionAuthOptions).user
+      }
+      if (account?.access_token) {
+        token.accessToken = account.access_token
       }
       return token
     },
     session: async ({ session, token }) => {
-      const tokenAny = token as any
-      session.user = tokenAny.user
+      session.user = (token as any).user
+      session.accessToken = token.accessToken
       return session
     }
   },
+  jwt: {
+    encode: async ({ token, secret }: JWTEncodeParams) => {
+      if (!token) return ''
+      const { exp, iat, ...payload } = token
+      return jwt.sign(payload, secret, { expiresIn: ONE_MONTH_IN_SECONDS })
+    },
+    decode: async ({ token, secret }: JWTDecodeParams) => {
+      if (!token) return null
+      // return jwt.verify(token, secret) as Record<string,unknown>
+      return jwt.verify(token, secret) as JWT
+    }
+  }
 }
 
 export const getSession = async () => {

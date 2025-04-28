@@ -1,0 +1,3 @@
+export const ONE_DAY_IN_SECONDS = 86400
+export const ONE_MONTH_IN_SECONDS = ONE_DAY_IN_SECONDS * 30
+export const UUID_STRING_LENGHT = 36

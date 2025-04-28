@@ -1,22 +1,16 @@
-import NextAuth from 'next-auth'
-
-export type TokenData = {
-  userId: string
-}
-
-export type SessionAuthOptions = {
-  user: SessionUser
-}
-
-export type SessionUser = {
-  id: string
-  name: string
-  email: string
-  password: string
-}
+import NextAuth, { DefaultSession } from 'next-auth'
+import { SessionUser } from '@repo/lib/types/auth'
 
 declare module 'next-auth' {
-  interface Session {
+  interface Session extends DefaultSession {
     user: SessionUser
+    accessToken: string
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    user: SessionUser
+    accessToken: string
   }
 }

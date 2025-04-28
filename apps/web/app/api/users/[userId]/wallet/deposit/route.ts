@@ -3,6 +3,7 @@ import { NextResponse, NextRequest } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { DepositSchema, DepositSchemaInfer } from '@repo/lib/schemas/deposit'
 import { convertMoneyStrToNumber } from '@repo/lib/utils/currency'
+import { DepositStatus } from '@repo/database'
 
 type Params = {
   params: Promise<{
@@ -75,13 +76,11 @@ export async function POST(
 
     await prisma.$transaction(async (tx) => {
       if (exist.wallet) {
-        await tx.transaction.create({
+        await tx.deposit.create({
           data: {
             amount: convertMoneyStrToNumber(data.amount),
-            senderUserId: userId,
-            receiverUserId: userId,
-            type: "DEPOSIT",
-            status: "COMPLETED"
+            userId: userId,
+            status: DepositStatus.COMPLETED
           }
         })
   
@@ -92,7 +91,6 @@ export async function POST(
           }
         })
       }
-
     })
 
     return NextResponse.json({}, { status: 201 })

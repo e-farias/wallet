@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { useSessionContext } from "@/providers/session"
 import { cn } from "@/lib/utils"
-import { getUserWallet } from "@/lib/fetchs/wallet"
+import { getUserWallet } from "@/lib/fetchs/payments"
 import { Wallet } from "@repo/lib/types/wallet"
 import { convertMoneyNumberToStr } from "@repo/lib/utils/currency"
 
@@ -22,19 +22,23 @@ export default function Page() {
   const [showModalDeposit, setShowModalDeposit] = useState(false)
 
   const getData = async () => {
-    const response = await getUserWallet(user.id)
+    try {
+      const newWallet = await getUserWallet(user.id)
+      setWallet(newWallet)
+      
+    } catch (error: any) {
 
-    if (response.ok) {
-
-      const data = await response.json() as Wallet
-      setWallet(data)
-
-    } else {
+      console.log('[ERROR] ❌ getUserWallet\n', error)
+      
       let errorMsg = "Erro ao buscar dados da carteira. Relate ao suporte e tente novamente mais tarde."
-      const responseData = await response.json()
-      if (responseData.msg) {
-        errorMsg = responseData.msg
+      if (error.response?.data.message) {
+        if (Array.isArray(error.response.data.message)) {
+          errorMsg = error.response?.data.message[0]
+        } else {
+          errorMsg = error.response?.data.message
+        }
       }
+
       toast.error(errorMsg)
     }
   }
@@ -53,6 +57,7 @@ export default function Page() {
 
     return classNames
   }
+
   useEffect(() => {
     getData()
   }, [])
@@ -76,8 +81,8 @@ export default function Page() {
                 "transition-transform transform hover:scale-110",
                 getWalletColorsCn(wallet.balance)
               )}>
-                <h2 className="text-xl">Saldo Atual</h2>
-                <p className="mt-4 text-4xl font-semibold">
+                <h2 className="text">Saldo Atual</h2>
+                <p className="mt-2 text-5xl font-semibold">
                   {convertMoneyNumberToStr(wallet.balance)}
                 </p>
               </div>

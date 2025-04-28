@@ -40,7 +40,7 @@ export default function LoginForm() {
       setLoading(true)
       clearErrors()
 
-      signIn('credentials', {
+      await signIn('credentials', {
         redirect: false,
         email: data.email,
         password: data.password
@@ -173,7 +173,7 @@ export default function LoginForm() {
         {loading ? (
           <LoaderDots
             color='#FFF'
-            zoom={1.5}
+            zoom={2}
           />
         ) : (
           <p>Entrar</p>

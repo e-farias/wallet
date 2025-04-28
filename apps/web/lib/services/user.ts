@@ -4,7 +4,7 @@ import { hash } from 'bcrypt'
 
 export const createUser = async (data: RegisterProps) => {
   
-  const password = await hash(data.password, Number(process.env.HASH_SALT))
+  const password = await hash(data.password, Number(process.env.AUTH_HASH_SALT))
   
   return await prisma.user.create({
     data: {

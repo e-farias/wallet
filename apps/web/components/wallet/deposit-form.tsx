@@ -1,12 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { cn } from "@/lib/utils"
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DepositProps, DepositSchema } from '@repo/lib/schemas/deposit'
-import { createDeposit } from '@/lib/fetchs/wallet'
+import { createDeposit } from '@/lib/fetchs/payments'
 import { useSessionContext } from '@/providers/session'
 import {
   maskMoneyString
@@ -22,7 +21,6 @@ import { toast } from 'sonner'
 export default function DepositForm() {
 
   const [loading, setLoading] = useState(false)
-  const router = useRouter()
   const { user } = useSessionContext()
   const {
     register,
@@ -33,7 +31,8 @@ export default function DepositForm() {
     formState: { errors },
   } = useForm<DepositProps>({
     defaultValues: {
-      amount: maskMoneyString("0")
+      amount: maskMoneyString("0"),
+      userId: user.id
     },
     resolver: zodResolver(DepositSchema),
   })
@@ -44,28 +43,33 @@ export default function DepositForm() {
   }
 
   const onSubmit: SubmitHandler<DepositProps> = async (data) => {
-    setLoading(true)
-    clearErrors()
+    try {
+      setLoading(true)
+      clearErrors()
 
-    const response = await createDeposit(user.id, data.amount)
-
-    if (response.ok) {
+      await createDeposit(data)
 
       toast.success("Depósito efetuado com sucesso! Em breve ele aparecerá na sua carteira")
       setTimeout(() => {
         window.location.reload()
-      }, 2000)
+      }, 1500)
 
-    } else {
+    } catch (error: any) {
+      console.log('[ERROR] ❌ createDeposit\n', error)
+      
       let errorMsg = "Erro ao criar depósito. Relate ao suporte e tente novamente mais tarde."
-      const responseData = await response.json()
-      if (responseData.msg) {
-        errorMsg = responseData.msg
+      if (error.response?.data.message) {
+        if (Array.isArray(error.response.data.message)) {
+          errorMsg = error.response?.data.message[0]
+        } else {
+          errorMsg = error.response?.data.message
+        }
       }
 
       setError("root", { type: 'custom', message: errorMsg })
       toast.error(errorMsg)
-
+ 
+    } finally {
       setLoading(false)
     }
   }
@@ -110,7 +114,7 @@ export default function DepositForm() {
         {loading ? (
           <LoaderDots
             color='#FFF'
-            zoom={1.5}
+            zoom={2}
           />
         ) : (
           <p>Depositar</p>

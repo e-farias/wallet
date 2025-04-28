@@ -8,17 +8,17 @@ generator client {
   output   = "./generated/client"
 }
 
-enum TransactionType {
-  TRANSFER
-  DEPOSIT
-  REVERSAL
-}
-
 enum TransactionStatus {
   PENDING
   COMPLETED
   FAILED
   REVERSED
+}
+
+enum DepositStatus {
+  PENDING
+  COMPLETED
+  FAILED
 }
 
 model User {
@@ -32,6 +32,7 @@ model User {
   wallet               Wallet?
   sentTransactions     Transaction[] @relation("Sender")
   receivedTransactions Transaction[] @relation("Receiver")
+  deposits             Deposit[]
 
   @@index([id])
   @@index([email])
@@ -54,15 +55,14 @@ model Wallet {
 model Transaction {
   id                    String            @id @default(uuid())
   senderUserId          String
-  receiverUserId        String?
+  receiverUserId        String
   amount                Int
-  type                  TransactionType
   status                TransactionStatus @default(PENDING)
   description           String?
   originalTransactionId String?
 
   sender              User          @relation("Sender", fields: [senderUserId], references: [id])
-  receiver            User?         @relation("Receiver", fields: [receiverUserId], references: [id])
+  receiver            User          @relation("Receiver", fields: [receiverUserId], references: [id])
   originalTransaction Transaction?  @relation("ReversalRelation", fields: [originalTransactionId], references: [id])
   reversals           Transaction[] @relation("ReversalRelation")
 
@@ -73,4 +73,20 @@ model Transaction {
   @@index([receiverUserId])
   @@index([status])
   @@map("transactions")
+}
+
+model Deposit {
+  id     String        @id @default(uuid())
+  userId String
+  amount Int
+  status DepositStatus @default(PENDING)
+
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+  @@index([status])
+  @@map("deposits")
 }

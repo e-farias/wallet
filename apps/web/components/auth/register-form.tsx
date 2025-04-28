@@ -226,7 +226,7 @@ export default function RegisterForm() {
         {loading ? (
           <LoaderDots
             color='#FFF'
-            zoom={1.5}
+            zoom={2}
           />
         ) : (
           <p>Criar conta</p>
