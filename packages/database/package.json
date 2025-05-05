@@ -1,6 +1,6 @@
 {
   "name": "@repo/database",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "exports": {
     ".": {
       "import": "./dist/client.js",
@@ -9,15 +9,16 @@
     }
   },
   "scripts": {
-    "db:update": "dotenv -e ../../.env -- prisma db push && pnpm run db:build",
+    "build": "tsup src/*",
+    "prebuild": "pnpm run generate",
+    "build:packages": "pnpm build",
+    "db:update": "dotenv -e ../../.env -- prisma db push && pnpm run build",
     "db:studio": "dotenv -e ../../.env -- prisma studio",
     "db:reset": "dotenv -e ../../.env -- pnpm run db:update --force-reset",
     "query": "npx ts-node --compiler-options {'\"module\":\"CommonJS\"'} src/query.ts",
     "format": "prisma format",
     "generate": "prisma generate",
-    "lint": "eslint . --max-warnings 0",
-    "db:build": "tsup src/*",
-    "predb:build": "pnpm run generate"
+    "lint": "eslint . --max-warnings 0"
   },
   "dependencies": {
     "@prisma/client": "^6.6.0",

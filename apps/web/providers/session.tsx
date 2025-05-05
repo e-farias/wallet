@@ -1,11 +1,11 @@
 'use client'
 
-import { Session } from 'next-auth'
 import React, { ReactNode, createContext, useContext, useMemo } from 'react'
+import { Session } from '@repo/lib/auth/types'
 
 const SessionContext = createContext<Session>({} as Session)
 
-interface SessionContextProviderProps {
+type SessionContextProviderProps = {
   children: ReactNode
   session: Session
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { SessionProvider } from "next-auth/react"
+import { AuthContextProvider } from '@/providers/auth'
 import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/providers/theme'
 import { SidebarProvider } from "@/components/layouts/sidebar"
@@ -8,7 +8,7 @@ import { ForceTheme } from "@/components/force-theme"
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider>
+    <AuthContextProvider>
       <ThemeProvider
         attribute="class"
         defaultTheme="dark"
@@ -31,6 +31,6 @@ export function Providers({ children }: { children: React.ReactNode }) {
           <ForceTheme theme="dark" />
         </SidebarProvider>
       </ThemeProvider>
-    </SessionProvider>
+    </AuthContextProvider>
   )
 }

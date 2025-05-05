@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { useSessionContext } from "@/providers/session"
 import { cn } from "@/lib/utils"
 import { getUserWallet } from "@/lib/fetchs/payments"
 import { Wallet } from "@repo/lib/types/wallet"
@@ -16,14 +15,13 @@ import DepositForm from "@/components/wallet/deposit-form"
 
 export default function Page() {
 
-  const { user } = useSessionContext()
   const [wallet, setWallet] = useState<Wallet | null>(null)
   const [showModalTransfer, setShowModalTransfer] = useState(false)
   const [showModalDeposit, setShowModalDeposit] = useState(false)
 
   const getData = async () => {
     try {
-      const newWallet = await getUserWallet(user.id)
+      const newWallet = await getUserWallet()
       setWallet(newWallet)
       
     } catch (error: any) {

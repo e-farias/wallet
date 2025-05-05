@@ -15,12 +15,6 @@ enum TransactionStatus {
   REVERSED
 }
 
-enum DepositStatus {
-  PENDING
-  COMPLETED
-  FAILED
-}
-
 model User {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -36,7 +30,6 @@ model User {
 
   @@index([id])
   @@index([email])
-  @@map("users")
 }
 
 model Wallet {
@@ -49,7 +42,6 @@ model Wallet {
   user User @relation(fields: [userId], references: [id])
 
   @@index([userId])
-  @@map("wallets")
 }
 
 model Transaction {
@@ -72,14 +64,13 @@ model Transaction {
   @@index([senderUserId])
   @@index([receiverUserId])
   @@index([status])
-  @@map("transactions")
 }
 
 model Deposit {
-  id     String        @id @default(uuid())
+  id     String            @id @default(uuid())
   userId String
   amount Int
-  status DepositStatus @default(PENDING)
+  status TransactionStatus @default(PENDING)
 
   user User @relation(fields: [userId], references: [id])
 
@@ -87,6 +78,6 @@ model Deposit {
   updatedAt DateTime @updatedAt
 
   @@index([id])
+  @@index([userId])
   @@index([status])
-  @@map("deposits")
 }

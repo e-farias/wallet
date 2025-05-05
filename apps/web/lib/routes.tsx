@@ -23,12 +23,12 @@ export const getRoutes = () => {
     },
     {
       label: 'Transferências',
-      path: "/transactions",
+      path: "/wallet/transactions",
       icon: <ArrowLeftRight className='w-5 h-5' />
     },
     {
       label: 'Depósitos',
-      path: "/deposits",
+      path: "/wallet/deposits",
       icon: <BanknoteArrowDown className='w-5 h-5' />
     },
   ]

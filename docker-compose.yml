@@ -6,6 +6,7 @@ services:
     image: postgres:17.4
     container_name: wallet-postgres
     restart: unless-stopped
+    user: ${DB_POSTGRES_USER}
     environment:
       POSTGRES_PASSWORD: ${DB_POSTGRES_PASSWORD}
       POSTGRES_DB: ${DB_POSTGRES_NAME}

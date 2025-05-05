@@ -1,18 +1,18 @@
-import { validate } from '@/config/env.validation'
 import path from 'path'
 
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { TransactionsModule } from './transactions/transactions.module'
+import { DepositModule } from './deposit/deposit.module'
+import { WalletModule } from './wallet/wallet.module'
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: path.resolve(__dirname, '../../../.env'),
       isGlobal: true,
-      validate,
     }),
-    TransactionsModule,
+    DepositModule,
+    WalletModule
   ],
 })
 

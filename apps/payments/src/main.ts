@@ -1,8 +1,6 @@
 import { NestFactory } from '@nestjs/core'
 import { AppModule } from './app.module'
 import { ValidationPipe } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
-import { EnvironmentVariables } from './config/env.validation'
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
@@ -13,9 +11,17 @@ async function bootstrap() {
     })
   )
 
-  const configService = app.get(ConfigService<EnvironmentVariables>)
-  const port = configService.get<number>('PAYMENT_API_PORT')
-  
+  const port = Number(process.env.PAYMENT_API_PORT)
+  const appBaseUrl = process.env.NEXT_PUBLIC_BASE_URL
+
+  app.enableCors({
+    credentials: true,
+    origin: [
+      appBaseUrl,
+    ],
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  })
+
   await app.listen(port)
 }
 

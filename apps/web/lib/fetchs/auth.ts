@@ -1,13 +1,20 @@
-import { RegisterProps } from "@repo/lib/schemas/register"
-import { appApi } from "../services/apis"
+import { SignUpProps, SignInProps } from "@repo/lib/auth/types"
+import { apiAuth } from "../services/api"
+import { Session } from "@repo/lib/auth/types"
 
-export const createUser = async (data: RegisterProps) => {
-  const endPoint = `/auth/register`
-  return await appApi.post(endPoint, data)
+export const signUp = async (params: SignUpProps) => {
+  const endPoint = `/auth/signup`
+  return await apiAuth.post(endPoint, params)
 }
 
-export const forgotPassword = async (email: string) => {
-  const endPoint = `/auth/forgot-password`
-  return await appApi.post(endPoint, {email})
+export const signIn = async (params: SignInProps) => {
+  const endPoint = `/auth/signin`
+  const { data } = await apiAuth.post(endPoint, params)
+  return data as Session
 }
 
+export const getAccessToken = async (refreshToken: string) => {
+  const endPoint = `/auth/access-token`
+  const { data } = await apiAuth.post(endPoint, {refreshToken})
+  return data.accessToken as string
+}
