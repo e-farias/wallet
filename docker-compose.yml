@@ -26,6 +26,48 @@ services:
       resources:
         limits:
           memory: 1GB
+  
+  redis:
+    image: redis:7.4.3-alpine
+    container_name: wallet-redis
+    restart: unless-stopped
+    command: redis-server --requirepass ${DB_REDIS_PASSWORD}
+    ports:
+      - ${DB_REDIS_PORT}:6379
+    volumes: 
+      - ./docker/redis/data:/data
+      - ./docker/redis/logs:/var/log/redis
+    networks: 
+      - intranet
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: ${DOCKER_HEALTHCHECK_INTERVAL}
+      retries: ${DOCKER_HEALTHCHECK_RETRIES}
+      timeout: ${DOCKER_HEALTHCHECK_TIMEOUT}
+    deploy:
+      resources:
+        limits:
+          memory: 2GB
+
+  bullboard:
+    image: venatum/bull-board
+    container_name: wallet-bullboard
+    restart: unless-stopped
+    environment:
+      REDIS_HOST: redis
+      REDIS_PORT: ${DB_REDIS_PORT}
+      REDIS_PASSWORD: ${DB_REDIS_PASSWORD}
+      REDIS_USE_TLS: 'false'
+    ports:
+      - ${BULL_UI_PORT}:3000
+    networks:
+      - intranet
+    depends_on:
+      - redis
+    deploy:
+      resources:
+        limits:
+          memory: 0.5GB
 
 networks:
   intranet:
