@@ -6,7 +6,6 @@ import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DepositProps, DepositSchema } from '@repo/lib/schemas/deposit'
 import { createDeposit } from '@/lib/fetchs/payments'
-import { useSessionContext } from '@/providers/session'
 import {
   maskMoneyString
 } from '@repo/lib/utils/currency'
@@ -21,7 +20,6 @@ import { toast } from 'sonner'
 export default function DepositForm() {
 
   const [loading, setLoading] = useState(false)
-  const { user } = useSessionContext()
   const {
     register,
     handleSubmit,
@@ -31,8 +29,7 @@ export default function DepositForm() {
     formState: { errors },
   } = useForm<DepositProps>({
     defaultValues: {
-      amount: maskMoneyString("0"),
-      userId: user.id
+      amount: maskMoneyString("0")
     },
     resolver: zodResolver(DepositSchema),
   })

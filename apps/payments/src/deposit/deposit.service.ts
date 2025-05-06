@@ -4,15 +4,17 @@ import {
   BadRequestException
 } from "@nestjs/common"
 import { PrismaService } from "@/prisma/prisma.service"
-import { DepositProps } from "@repo/lib/schemas/deposit"
 import { convertMoneyStrToNumber } from "@repo/lib/utils/currency"
 import { TransactionStatus } from "@repo/database"
+import { CreateParams } from "./deposit.types"
 
 @Injectable()
 export class DepositService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
-  async create(params: DepositProps) {
+  async create(params: CreateParams) {
 
     const exist = await this.prisma.user.findUnique({
       where: { id: params.userId },
