@@ -1,10 +1,9 @@
 'use client'
 
 import { useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
-import { getUserWallet } from "@/lib/fetchs/payments"
-import { Wallet } from "@repo/lib/types/wallet"
+import { cn, getWalletColorsCn } from "@/lib/utils"
 import { convertMoneyNumberToStr } from "@repo/lib/utils/currency"
+import { useWalletContext } from "@/providers/wallet"
 
 // UI
 import PageHeader from "@/components/layouts/page-header"
@@ -15,49 +14,12 @@ import DepositForm from "@/components/deposit/deposit-form"
 
 export default function Page() {
 
-  const [wallet, setWallet] = useState<Wallet | null>(null)
+  const { wallet, updateWallet } = useWalletContext()
   const [showModalTransfer, setShowModalTransfer] = useState(false)
   const [showModalDeposit, setShowModalDeposit] = useState(false)
 
-  const getData = async () => {
-    try {
-      const newWallet = await getUserWallet()
-      setWallet(newWallet)
-      
-    } catch (error: any) {
-
-      console.log('[ERROR] ❌ getUserWallet\n', error)
-      
-      let errorMsg = "Erro ao buscar dados da carteira. Relate ao suporte e tente novamente mais tarde."
-      if (error.response?.data.message) {
-        if (Array.isArray(error.response.data.message)) {
-          errorMsg = error.response?.data.message[0]
-        } else {
-          errorMsg = error.response?.data.message
-        }
-      }
-
-      toast.error(errorMsg)
-    }
-  }
-
-  const getWalletColorsCn = (balance: number) => {
-
-    let classNames = cn(
-      "border-dark-900 from-dark-800 via-dark-900 to-dark-950"
-    )
-    if (balance < 0) {
-      classNames = "border-danger-900 from-danger-800 via-danger-900 to-danger-950"
-    }
-    if (balance > 0) {
-      classNames = "border-success-900 from-success-800 via-success-900 to-success-950"
-    }
-
-    return classNames
-  }
-
   useEffect(() => {
-    getData()
+    updateWallet()
   }, [])
 
   return (
@@ -75,7 +37,6 @@ export default function Page() {
               <div className={cn(
                 "grid mx-auto w-full lg:w-1/2 min-h-32",
                 "rounded-xl shadow-lg p-6 py-12",
-                "border-2 bg-gradient-to-br",
                 "transition-transform transform hover:scale-110",
                 getWalletColorsCn(wallet.balance)
               )}>

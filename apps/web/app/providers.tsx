@@ -4,6 +4,7 @@ import { Toaster } from 'sonner'
 import { ThemeProvider } from '@/providers/theme'
 import { SidebarProvider } from "@/components/layouts/sidebar"
 import { ForceTheme } from "@/components/force-theme"
+import { WalletProvider } from '@/providers/wallet'
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
@@ -13,19 +14,21 @@ export function Providers({ children }: { children: React.ReactNode }) {
       enableSystem={false}
     >
       <SidebarProvider>
-        <Toaster
-          position="bottom-center"
-          toastOptions={{
-            duration: 5000,
-            style: {
-              width: 'auto',
-              maxWidth: '90dvw',
-              padding: "0.75rem 1.25rem",
-              borderRadius: '10px'
-            }
-          }}
-        />
-        {children}
+        <WalletProvider>
+          <Toaster
+            position="bottom-center"
+            toastOptions={{
+              duration: 5000,
+              style: {
+                width: 'auto',
+                maxWidth: '90dvw',
+                padding: "0.75rem 1.25rem",
+                borderRadius: '10px'
+              }
+            }}
+          />
+          {children}
+        </WalletProvider>
         <ForceTheme theme="dark" />
       </SidebarProvider>
     </ThemeProvider>
