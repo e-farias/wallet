@@ -6,14 +6,15 @@ import { cn } from "@/lib/utils"
 type Props = ComponentProps<"button"> & {
   children: React.ReactNode
   popoverText?: string
+  theme?: 'primary' | 'secondary' | 'transparent'
 }
 
 export const btnClassNamesDefault = cn(
   "flex w-auto min-h-10 justify-center items-center group relative",
   "rounded-lg px-6 py-2 gap-2",
   "shadow-sm hover:shadow-lg disabled:shadow-none",
-  "bg-primary-500 active:bg-primary-700",
-  "dark:active:bg-dark-700 disabled:opacity-50",
+  "active:bg-primary-700 dark:active:bg-dark-700",
+  "disabled:opacity-50",
   "font-medium text-dark-50",
   "cursor-pointer disabled:cursor-not-allowed",
   "transition-all duration-150 ease-in-out",
@@ -23,10 +24,16 @@ export const btnClassNamesDefault = cn(
 const Button = ({
   children,
   popoverText,
+  theme = 'primary',
   ...props
 }: Props) => {
 
-  let classNames = btnClassNamesDefault
+  let classNames = cn(
+    btnClassNamesDefault,
+    theme == 'primary' && 'bg-primary-500',
+    theme == 'secondary' && 'bg-dark-800',
+    theme == 'transparent' && 'bg-transparent active:bg-transparent dark:active:bg-transparent',
+  )
 
   if (props && props.className) {
     classNames = cn(classNames, props.className)

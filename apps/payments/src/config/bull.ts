@@ -18,6 +18,7 @@ export const queueNames = {
 
 export const jobNames = {
   deposit: {
-    create: "create"
+    create: "create",
+    cancel: "cancel"
   }
 } as const

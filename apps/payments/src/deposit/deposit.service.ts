@@ -1,14 +1,16 @@
 import {
   Injectable,
   NotFoundException,
-  BadRequestException
+  BadRequestException,
+  UnauthorizedException
 } from "@nestjs/common"
 import { PrismaService } from "@/prisma/prisma.service"
 import { convertMoneyStrToNumber } from "@repo/lib/utils/currency"
 import { Prisma, TransactionStatus } from "@repo/database"
-import { CreateParams, GetAllParams } from "./deposit.types"
+import { CreateParams, GetAllParams, CancelParams } from "./deposit.types"
 import { take, getSkip } from "@repo/lib"
 import { DepositsTableData } from "@repo/lib/types/deposit"
+import { depositIsReversible } from "@repo/lib/schemas/deposit"
 
 @Injectable()
 export class DepositService {
@@ -47,7 +49,6 @@ export class DepositService {
         }
       })
 
-      // Add create deposit job in query system
       const newWalletValue = exist.wallet.balance + convertMoneyStrToNumber(params.amount)
       await tx.wallet.update({
         where: { id: exist.wallet.id },
@@ -77,6 +78,74 @@ export class DepositService {
       items
     }
 
+  }
+
+  async cancel(params: CancelParams) {
+
+    const exist = await this.prisma.deposit.findUnique({
+      where: { id: params.depositId },
+      select: {
+        user: {
+          select: {
+            id: true,
+            wallet: {
+              select: {
+                balance: true
+              }
+            }
+          }
+        },
+        amount: true,
+        status: true,
+      }
+    })
+
+    if (!exist) {
+      throw new NotFoundException({
+        msg: "Esse depósito não existe"
+      })
+    }
+
+    if (exist.user.id !== params.userId) {
+      throw new UnauthorizedException({
+        msg: "Você não tem acesso aos dados desse depósito"
+      })
+    }
+
+    if (!depositIsReversible(exist.status)) {
+      throw new BadRequestException({
+        msg: "Não é possível estornar esse depósito"
+      })
+    }
+
+    const updatedAt = new Date()
+    const balance = exist.user.wallet.balance - exist.amount
+
+    // if (balance < 0) {
+    //   throw new BadRequestException({
+    //     msg: 'Saldo insuficiente para essa operação'
+    //   })
+    // }
+
+    await this.prisma.$transaction( async (tx) => {
+
+      await tx.deposit.update({
+        where: { id: params.depositId },
+        data: {
+          status: "REVERSED",
+          updatedAt
+        }
+      })
+
+      await tx.wallet.update({
+        where: { userId: params.userId },
+        data: {
+          balance,
+          updatedAt
+        }
+      })
+
+    })
   }
 
 }

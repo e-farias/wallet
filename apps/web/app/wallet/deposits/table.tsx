@@ -2,9 +2,9 @@
 
 // Core
 import { useState, useEffect } from "react"
-import { cn } from "@/lib/utils"
+import { cn, handleCopyToClipboard } from "@/lib/utils"
 import { convertMoneyNumberToStr } from "@repo/lib/utils/currency"
-import { getAllDeposits } from "@/lib/fetchs/deposit"
+import { getAllDeposits, cancelDeposit } from "@/lib/fetchs/deposit"
 import { formatDateTime } from "@repo/lib/utils/datetime"
 import { PaginationDataByPage, getPaginationDataByPage } from "@repo/lib/pagination"
 import { depositIsReversible } from "@repo/lib/schemas/deposit"
@@ -20,9 +20,11 @@ import {
   ChevronLeft,
   ChevronRight,
   PackageOpen,
-  Undo2,
+  Undo2
 } from "lucide-react"
 import TransactionStatusPill from "@/components/transaction-status-pill"
+import Modal from "@/components/modal"
+import DepositCancelForm from "@/components/deposit/cancel-deposit-form"
 
 const DepositsTable = () => {
 
@@ -36,6 +38,8 @@ const DepositsTable = () => {
     tableData.items.length,
     tableData.total
   ))
+  const [showModalCancel, setShowModalCancel] = useState(false)
+  const [depositIdActive, setDepositIdActive] = useState<null | string>(null)
 
   const getData = async (): Promise<void> => {
     try {
@@ -81,7 +85,7 @@ const DepositsTable = () => {
         )}>
           {loading ? (
             <div className="w-full min-h-[50dvh] flex justify-center items-center">
-              <LoadingDots zoom={2} color="#FFF" />
+              <LoadingDots zoom={3} />
             </div>
           ) : (
             <>
@@ -96,13 +100,19 @@ const DepositsTable = () => {
                         <thead>
                           <tr>
                             <th scope="col" className="px-2 py-3 text-left font-semibold">
+                              ID
+                            </th>
+                            <th scope="col" className="px-2 py-3 text-left font-semibold">
                               Valor
                             </th>
                             <th scope="col" className="px-2 py-3 text-left font-semibold">
                               Status
                             </th>
                             <th scope="col" className="px-2 py-3 text-left font-semibold">
-                              Data
+                              Feito em
+                            </th>
+                            <th scope="col" className="px-2 py-3 text-left font-semibold">
+                              Atualizado em
                             </th>
                             <th scope="col" className="px-2 py-3 text-center font-semibold">
                               Ações
@@ -113,8 +123,23 @@ const DepositsTable = () => {
                           {tableData.items.map((item) => {
                             return (
                               <tr key={item.id} className="h-16 border-b border-dark-100 dark:border-dark-700 rounded">
+
                                 <td className="p-2">
-                                  <div className="min-w-0 flex-auto">
+                                  <div className="flex-auto truncate">
+                                    <Button
+                                      type="button"
+                                      onClick={() => handleCopyToClipboard(item.id)}
+                                      popoverText="Copiar"
+                                      className="min-h-0 p-0"
+                                      theme="transparent"
+                                    >
+                                      {item.id}
+                                    </Button>
+                                  </div>
+                                </td>
+
+                                <td className="p-2">
+                                  <div className="flex-auto">
                                     <p>
                                       {convertMoneyNumberToStr(item.amount)}
                                     </p>
@@ -122,15 +147,23 @@ const DepositsTable = () => {
                                 </td>
 
                                 <td className="p-2">
-                                  <div className="min-w-0 flex-auto">
+                                  <div className="flex-auto">
                                     <TransactionStatusPill status={item.status} />
                                   </div>
                                 </td>
 
                                 <td className="p-2">
-                                  <div className="min-w-0 flex-auto">
+                                  <div className="flex-auto">
                                     <p>
                                       {formatDateTime(item.createdAt)}
+                                    </p>
+                                  </div>
+                                </td>
+
+                                <td className="p-2">
+                                  <div className="flex-auto">
+                                    <p>
+                                      {formatDateTime(item.updatedAt)}
                                     </p>
                                   </div>
                                 </td>
@@ -146,8 +179,11 @@ const DepositsTable = () => {
                                           "bg-transparent active:bg-transparent",
                                           "shadow-none hover:shadow",
                                         )}
-                                        popoverText="Estornar"
-                                        onClick={() => console.log("asd")}
+                                        popoverText="Cancelar"
+                                        onClick={() => {
+                                          setShowModalCancel(true)
+                                          setDepositIdActive(item.id)
+                                        }}
                                       >
                                         <Undo2
                                           className="h-4 w-4"
@@ -212,6 +248,27 @@ const DepositsTable = () => {
                     Nada cadastrado no momento
                   </span>
                 </div>
+              )}
+
+              {(showModalCancel && depositIdActive) && (
+                <Modal
+                  show={showModalCancel}
+                  setShow={setShowModalCancel}
+                  size="sm"
+                >
+                  <DepositCancelForm
+                    depositId={depositIdActive}
+                    handleSubmitSuccess={() => {
+                      getData()
+                      setShowModalCancel(false)
+                      setDepositIdActive(null)
+                    }}
+                    handleCancel={() => {
+                      setShowModalCancel(false)
+                      setDepositIdActive(null)
+                    }}
+                  />
+                </Modal>
               )}
             </>
           )}

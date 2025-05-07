@@ -5,6 +5,11 @@ export type CreateParams = DepositProps & {
 }
 
 export type GetAllParams = {
-  userId: string,
+  userId: string
   page: number
+}
+
+export type CancelParams = {
+  userId: string
+  depositId: string
 }

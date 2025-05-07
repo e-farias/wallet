@@ -8,6 +8,8 @@ import {
   Req,
   BadRequestException,
   Query,
+  Delete,
+  Param
 } from "@nestjs/common"
 import { JwtGuard } from "@repo/lib/auth/guards/jwt.guard"
 import { DepositService } from "./deposit.service"
@@ -45,7 +47,7 @@ export class DepositController {
     }
 
     const userId = (req.user as SessionUser).id
-    return await this.depositQueue.add(
+    await this.depositQueue.add(
       jobNames.deposit.create,
       {
         userId,
@@ -65,5 +67,21 @@ export class DepositController {
       userId,
       page
     })
+  }
+
+  @HttpCode(200)
+  @Delete('/:depositId')
+  async cancel(
+    @Req() req: Request,
+    @Param('depositId') depositId: string
+  ) {
+    const userId = (req.user as SessionUser).id
+    await this.depositQueue.add(
+      jobNames.deposit.cancel,
+      {
+        userId,
+        depositId
+      }
+    )
   }
 }

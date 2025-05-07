@@ -11,7 +11,7 @@ type Props = {
   show: boolean
   setShow: Dispatch<SetStateAction<boolean>>
   size: 'sm' | 'md' | 'lg'
-  title: string
+  title?: string
   children: React.ReactNode
   icon?: 'Create' | 'Edit' | 'Delete'
   zIndex?: number

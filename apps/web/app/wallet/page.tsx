@@ -11,7 +11,7 @@ import PageHeader from "@/components/layouts/page-header"
 import Button from "@/components/button"
 import { toast } from "sonner"
 import Modal from "@/components/modal"
-import DepositForm from "@/components/wallet/deposit-form"
+import DepositForm from "@/components/deposit/deposit-form"
 
 export default function Page() {
 
@@ -92,7 +92,7 @@ export default function Page() {
                 <Button
                   type='button'
                   onClick={() => setShowModalTransfer(true)}
-                  className="bg-dark-800"
+                  theme="secondary"
                 >
                   Transferir
                 </Button>

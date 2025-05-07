@@ -15,3 +15,8 @@ export const getAllDeposits = async (params: GetAllDepositParams) => {
 
   return data as DepositsTableData
 }
+
+export const cancelDeposit = async (depositId: string) => {
+  const endPoint = `/deposit/${depositId}`
+  await apiPayments.delete(endPoint)
+}

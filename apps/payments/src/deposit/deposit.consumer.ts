@@ -20,5 +20,9 @@ export class DepositConsumer extends WorkerHost {
     if (job.name == jobNames.deposit.create) {
       return await this.deposity.create(job.data)
     }
+
+    if (job.name == jobNames.deposit.cancel) {
+      return await this.deposity.cancel(job.data)
+    }
   }
 }

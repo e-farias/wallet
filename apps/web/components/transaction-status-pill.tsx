@@ -44,7 +44,7 @@ const TransactionStatusPill = ({
         "dark:text-warn-600 bg-warn-950"
       )}>
         <Undo2 className="w-4 h-4" />
-        <span className="mx-1">Estornada</span>
+        <span className="mx-1">Estornado</span>
       </div>
     )
   } else {
