@@ -123,9 +123,7 @@ const DepositsTable = () => {
 
                                 <td className="p-2">
                                   <div className="min-w-0 flex-auto">
-                                    <p>
-                                      <TransactionStatusPill status={item.status} />
-                                    </p>
+                                    <TransactionStatusPill status={item.status} />
                                   </div>
                                 </td>
 
