@@ -6,7 +6,8 @@ import {
   UseGuards,
   Get,
   Req,
-  BadRequestException
+  BadRequestException,
+  Query,
 } from "@nestjs/common"
 import { JwtGuard } from "@repo/lib/auth/guards/jwt.guard"
 import { DepositService } from "./deposit.service"
@@ -56,9 +57,13 @@ export class DepositController {
   @HttpCode(200)
   @Get()
   async getAll(
-    @Req() req: Request
+    @Req() req: Request,
+    @Query('page') page: number = 1
   ) {
     const userId = (req.user as SessionUser).id
-    return await this.deposit.getAll(userId)
+    return await this.deposit.getAll({
+      userId,
+      page
+    })
   }
 }

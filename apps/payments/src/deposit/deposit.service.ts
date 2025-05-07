@@ -5,8 +5,10 @@ import {
 } from "@nestjs/common"
 import { PrismaService } from "@/prisma/prisma.service"
 import { convertMoneyStrToNumber } from "@repo/lib/utils/currency"
-import { TransactionStatus } from "@repo/database"
-import { CreateParams } from "./deposit.types"
+import { Prisma, TransactionStatus } from "@repo/database"
+import { CreateParams, GetAllParams } from "./deposit.types"
+import { take, getSkip } from "@repo/lib"
+import { DepositsTableData } from "@repo/lib/types/deposit"
 
 @Injectable()
 export class DepositService {
@@ -56,10 +58,25 @@ export class DepositService {
     })
   }
 
-  async getAll(userId: string) {
-    return await this.prisma.deposit.findMany({
-      where: { userId },
-    })
+  async getAll(params: GetAllParams): Promise<DepositsTableData> {
+
+    let query: Prisma.DepositFindManyArgs = {
+      where: { userId: params.userId },
+      take,
+      skip: getSkip(params.page),
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }
+
+    const total = await this.prisma.deposit.count({ where: query.where })
+    const items = await this.prisma.deposit.findMany(query)
+
+    return {
+      total,
+      items
+    }
+
   }
 
 }

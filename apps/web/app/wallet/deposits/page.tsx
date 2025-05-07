@@ -1,7 +1,6 @@
-'use client'
-
 // UI
 import PageHeader from "@/components/layouts/page-header"
+import DepositsTable from "./table"
 
 export default function Page() {
 
@@ -12,9 +11,7 @@ export default function Page() {
       </PageHeader>
 
       <div className="flex flex-col w-full py-8">
-
-        
-
+        <DepositsTable />
       </div>
     </div>
   )

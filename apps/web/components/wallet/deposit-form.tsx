@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { useForm, SubmitHandler } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { DepositProps, DepositSchema } from '@repo/lib/schemas/deposit'
-import { createDeposit } from '@/lib/fetchs/payments'
+import { createDeposit } from '@/lib/fetchs/deposit'
 import {
   maskMoneyString
 } from '@repo/lib/utils/currency'
