@@ -4,10 +4,10 @@
 import { useState, useEffect } from "react"
 import { cn, handleCopyToClipboard } from "@/lib/utils"
 import { convertMoneyNumberToStr } from "@repo/lib/utils/currency"
-import { getAllDeposits, cancelDeposit } from "@/lib/fetchs/deposit"
+import { getAllDeposits } from "@/lib/fetchs/deposit"
 import { formatDateTime } from "@repo/lib/utils/datetime"
 import { PaginationDataByPage, getPaginationDataByPage } from "@repo/lib/pagination"
-import { depositIsReversible } from "@repo/lib/schemas/deposit"
+import { transactionIsReversible } from "@repo/lib/schemas/general"
 import { useWalletContext } from "@/providers/wallet"
 
 // Types
@@ -174,7 +174,7 @@ const DepositsTable = () => {
                                 <div className={cn(
                                   "relative flex flex-row justify-center gap-2"
                                 )}>
-                                  {depositIsReversible(item.status) && (
+                                  {transactionIsReversible(item.status) && (
                                     <Button
                                       className={cn(
                                         "p-1 px-1 w-10 h-10 rounded-full border-transparent",

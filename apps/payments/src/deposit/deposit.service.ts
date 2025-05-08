@@ -10,7 +10,7 @@ import { Prisma, TransactionStatus } from "@repo/database"
 import { CreateParams, GetAllParams, CancelParams } from "./deposit.types"
 import { take, getSkip } from "@repo/lib"
 import { DepositsTableData } from "@repo/lib/types/deposit"
-import { depositIsReversible } from "@repo/lib/schemas/deposit"
+import { transactionIsReversible } from "@repo/lib/schemas/general"
 
 @Injectable()
 export class DepositService {
@@ -112,7 +112,7 @@ export class DepositService {
       })
     }
 
-    if (!depositIsReversible(exist.status)) {
+    if (!transactionIsReversible(exist.status)) {
       throw new BadRequestException({
         msg: "Não é possível estornar esse depósito"
       })

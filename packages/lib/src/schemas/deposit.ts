@@ -1,6 +1,5 @@
 import { z } from 'zod'
 import { convertMoneyStrToNumber } from '../utils/currency'
-import { TransactionStatus } from '@repo/database'
 
 export type DepositProps = {
   amount: string
@@ -28,13 +27,3 @@ export const DepositSchema = z.object(DepositSchemaObj).refine((data) => {
 export type DepositSchemaInfer = z.infer<
   typeof DepositSchema
 >
-
-export const depositIsReversible = (status: TransactionStatus) => {
-  
-  const reversibles: TransactionStatus[] = [
-    "COMPLETED",
-    "PENDING"
-  ]
-
-  return reversibles.includes(status)
-}
