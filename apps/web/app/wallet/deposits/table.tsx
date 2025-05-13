@@ -7,7 +7,7 @@ import { convertMoneyNumberToStr } from "@repo/lib/utils/currency"
 import { getAllDeposits } from "@/lib/fetchs/deposit"
 import { formatDateTime } from "@repo/lib/utils/datetime"
 import { PaginationDataByPage, getPaginationDataByPage } from "@repo/lib/pagination"
-import { transactionIsReversible } from "@repo/lib/schemas/general"
+import { transactionIsReversible } from "@repo/lib/schemas/common"
 import { useWalletContext } from "@/providers/wallet"
 
 // Types

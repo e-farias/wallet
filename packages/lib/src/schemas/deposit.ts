@@ -1,28 +1,15 @@
 import { z } from 'zod'
-import { convertMoneyStrToNumber } from '../utils/currency'
+import { amountStringSchema } from './common'
 
 export type DepositProps = {
   amount: string
 }
 
 export const DepositSchemaObj = {
-  amount: z.string().min(3, { message: 'Campo obrigatório' }),
+  amount: amountStringSchema,
 }
 
-export const DepositSchema = z.object(DepositSchemaObj).refine((data) => {
-
-  const amountNumber = convertMoneyStrToNumber(data.amount)
-  const error = amountNumber <= 0
-
-  if (error) {
-    return false
-  }
-  return true
-},
-{
-  message: `Insira um valor maior que zero.`,
-  path: ['amount']
-})
+export const DepositSchema = z.object(DepositSchemaObj)
 
 export type DepositSchemaInfer = z.infer<
   typeof DepositSchema

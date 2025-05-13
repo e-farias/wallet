@@ -45,18 +45,14 @@ model Wallet {
 }
 
 model Transaction {
-  id                    String            @id @default(uuid())
-  senderUserId          String
-  receiverUserId        String
-  amount                Int
-  status                TransactionStatus @default(PENDING)
-  description           String?
-  originalTransactionId String?
+  id             String            @id @default(uuid())
+  senderUserId   String
+  receiverUserId String
+  amount         Int
+  status         TransactionStatus @default(PENDING)
 
-  sender              User          @relation("Sender", fields: [senderUserId], references: [id])
-  receiver            User          @relation("Receiver", fields: [receiverUserId], references: [id])
-  originalTransaction Transaction?  @relation("ReversalRelation", fields: [originalTransactionId], references: [id])
-  reversals           Transaction[] @relation("ReversalRelation")
+  sender   User @relation("Sender", fields: [senderUserId], references: [id])
+  receiver User @relation("Receiver", fields: [receiverUserId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

@@ -2,9 +2,11 @@ import path from 'path'
 
 import { Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
-import { DepositModule } from './deposit/deposit.module'
-import { WalletModule } from './wallet/wallet.module'
 import { BullModule } from '@nestjs/bullmq'
+import { WalletModule } from './wallet/wallet.module'
+import { DepositModule } from './deposit/deposit.module'
+import { TransactionModule } from './transaction/transaction.module'
+import { connection } from './config/bull'
 
 @Module({
   imports: [
@@ -12,15 +14,14 @@ import { BullModule } from '@nestjs/bullmq'
       envFilePath: path.resolve(__dirname, '../../../.env'),
       isGlobal: true,
     }),
-    BullModule.forRoot({
-      connection: {
-        host: process.env.DB_REDIS_HOST,
-        port: Number(process.env.DB_REDIS_PORT),
-        password: process.env.DB_REDIS_PASSWORD,
+    BullModule.forRoot(
+      {
+        connection
       }
-    }),
+    ),
+    WalletModule,
     DepositModule,
-    WalletModule
+    TransactionModule
   ],
 })
 

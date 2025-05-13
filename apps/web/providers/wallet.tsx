@@ -7,7 +7,7 @@ import {
   useState,
 } from 'react'
 import { Wallet } from '@repo/lib/types/wallet'
-import { getUserWallet } from '@/lib/fetchs/payments'
+import { getUserWallet } from '@/lib/fetchs/wallet'
 import { toast } from 'sonner'
 
 type ProviderProps = {
@@ -17,6 +17,7 @@ type ProviderProps = {
 type ContextValueProps = {
   wallet: Wallet | null
   updateWallet: () => Promise<void>
+  walletIsLoading: boolean
 }
 
 const WalletContext = createContext({} as ContextValueProps)
@@ -26,10 +27,12 @@ export function WalletProvider({
 } : ProviderProps) {
 
   const [wallet, setWallet] = useState<Wallet | null>(null)
+  const [walletIsLoading, setWalletIsLoading] = useState(false)
 
   const updateWallet = async () => {
     try {
 
+      setWalletIsLoading(true)
       const newWallet = await getUserWallet()
       setWallet(newWallet)
       
@@ -47,12 +50,15 @@ export function WalletProvider({
       }
 
       toast.error(errorMsg)
+    } finally {
+      setWalletIsLoading(false)
     }
   }
 
   const contextValue = {
     wallet,
-    updateWallet
+    updateWallet,
+    walletIsLoading
   }
 
   return (
