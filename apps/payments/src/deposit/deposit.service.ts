@@ -10,7 +10,7 @@ import { Prisma, TransactionStatus } from "@repo/database"
 import { CreateParams, GetAllParams, CancelParams } from "./deposit.types"
 import { take, getSkip } from "@repo/lib"
 import { DepositsTableData } from "@repo/lib/types/deposit"
-import { transactionIsReversible } from "@repo/lib/schemas/general"
+import { transactionIsReversible } from "@repo/lib/schemas/common"
 
 @Injectable()
 export class DepositService {
@@ -33,11 +33,9 @@ export class DepositService {
     })
 
     if (!exist) {
-      throw new NotFoundException("Não foi possível achar esse usuário")
-    }
-
-    if (!exist.wallet) {
-      throw new BadRequestException("Usuário sem carteira")
+      throw new NotFoundException({
+        msg: "Não foi possível achar esse usuário"
+      })
     }
 
     await this.prisma.$transaction(async (tx) => {
