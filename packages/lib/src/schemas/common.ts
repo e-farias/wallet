@@ -12,7 +12,6 @@ export const transactionIsReversible = (status: TransactionStatus) => {
   return reversibles.includes(status)
 }
 
-
 export const amountStringSchema = z
   .string()
   .min(1, { message: 'Campo obrigatório' })

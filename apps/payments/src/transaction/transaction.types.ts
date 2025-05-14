@@ -4,3 +4,8 @@ export type CreateParams = TransactionProps & {
   id: string
   userId: string
 }
+
+export type GetAllParams = {
+  userId: string
+  page: number
+}

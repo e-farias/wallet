@@ -5,13 +5,16 @@ import {
   Body,
   UseGuards,
   Req,
-  BadRequestException
+  BadRequestException,
+  Get,
+  Query
 } from "@nestjs/common"
 import { JwtGuard } from "@repo/lib/auth/guards/jwt.guard"
 import { InjectQueue } from "@nestjs/bullmq"
 import { Queue } from "bullmq"
 import { jobNames } from "@/config/bull"
 import { createRandomId } from "@/utils"
+import { TransactionService } from "./transaction.service"
 
 import { type TransactionProps, TransactionSchema } from "@repo/lib/schemas/transaction"
 import { type SessionUser } from "@repo/lib/auth/types"
@@ -24,7 +27,8 @@ export class TransactionController {
 
   constructor(
     @InjectQueue('transaction')
-    private readonly transactionQueue: Queue
+    private readonly transactionQueue: Queue,
+    private readonly transactionService: TransactionService
   ) { }
 
   @HttpCode(201)
@@ -40,9 +44,9 @@ export class TransactionController {
         msg: isValid.error.errors[0].message
       })
     }
-    
-    const { id, email  } = (req.user as SessionUser)
-    
+
+    const { id, email } = (req.user as SessionUser)
+
     if (email == params.receiverEmail) {
       throw new BadRequestException({
         msg: "Selecione uma conta diferente da sua para criar uma transferência."
@@ -60,4 +64,18 @@ export class TransactionController {
       jobPayload
     )
   }
+
+  @HttpCode(200)
+  @Get()
+  async getAll(
+    @Req() req: Request,
+    @Query('page') page: number = 1
+  ) {
+    const userId = (req.user as SessionUser).id
+    return await this.transactionService.getAll({
+      userId,
+      page
+    })
+  }
+
 }

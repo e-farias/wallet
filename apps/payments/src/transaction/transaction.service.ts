@@ -4,9 +4,11 @@ import {
   NotFoundException
 } from "@nestjs/common"
 import { PrismaService } from "@/prisma/prisma.service"
-import { CreateParams } from "./transaction.types"
+import { CreateParams, GetAllParams } from "./transaction.types"
 import { convertMoneyStrToNumber } from "@repo/lib/utils/currency"
-import { TransactionStatus } from "@repo/database"
+import { TransactionStatus, Prisma } from "@repo/database"
+import { take, getSkip } from "@repo/lib"
+import { Transaction } from "@repo/lib/types/transaction"
 
 @Injectable()
 export class TransactionService {
@@ -61,8 +63,8 @@ export class TransactionService {
     const newSenderBalance = sender.wallet.balance - amount
     const newReceiverBalance = receiver.wallet.balance + amount
 
-    await this.prisma.$transaction( async (tx) => {
-      
+    await this.prisma.$transaction(async (tx) => {
+
       // Create transaction
       await tx.transaction.create({
         data: {
@@ -95,4 +97,55 @@ export class TransactionService {
     })
 
   }
+
+  async getAll(params: GetAllParams) {
+
+    let query: Prisma.TransactionFindManyArgs = {
+      where: {
+        OR: [
+          {
+            senderUserId: params.userId
+          },
+          {
+            receiverUserId: params.userId
+          }
+        ]
+      },
+      take,
+      skip: getSkip(params.page),
+      orderBy: {
+        createdAt: 'desc'
+      }
+    }
+
+    const total = await this.prisma.transaction.count({ where: query.where })
+    const items = await this.prisma.transaction.findMany({
+      ...query,
+      select: {
+        id: true,
+        sender: {
+          select: {
+            name: true,
+            email: true,
+          }
+        },
+        receiver: {
+          select: {
+            name: true,
+            email: true,
+          }
+        },
+        amount: true,
+        status: true,
+        createdAt: true,
+        updatedAt: true
+      }
+    })
+
+    return {
+      total,
+      items
+    }
+  }
+
 }
