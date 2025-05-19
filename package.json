@@ -11,9 +11,9 @@
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types",
-    "docker:build": "docker-compose build --no-cache",
-    "docker:up": "pnpm docker:build && docker-compose up -dV",
-    "docker:down": "docker-compose down --rmi all",
+    "docker:build": "docker compose build --no-cache",
+    "docker:up": "pnpm docker:build && docker compose up -dV",
+    "docker:down": "docker compose down --rmi all",
     "del:builds": "find . -type d -name 'dist' -prune -exec rm -rf '{}' +",
     "del:libs": "find . -type d -name 'node_modules' -prune -exec rm -rf '{}' +",
     "del": "pnpm del:builds && pnpm del:libs"
