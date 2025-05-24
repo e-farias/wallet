@@ -7,7 +7,9 @@ import {
   Req,
   BadRequestException,
   Get,
-  Query
+  Query,
+  Delete,
+  Param
 } from "@nestjs/common"
 import { JwtGuard } from "@repo/lib/auth/guards/jwt.guard"
 import { InjectQueue } from "@nestjs/bullmq"
@@ -76,6 +78,22 @@ export class TransactionController {
       userId,
       page
     })
+  }
+
+  @HttpCode(200)
+  @Delete('/:transactionId')
+  async cancel(
+    @Req() req: Request,
+    @Param('transactionId') transactionId: string
+  ) {
+    const userId = (req.user as SessionUser).id
+    await this.transactionQueue.add(
+      jobNames.transaction.cancel,
+      {
+        userId,
+        transactionId
+      }
+    )
   }
 
 }

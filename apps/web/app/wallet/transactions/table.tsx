@@ -25,7 +25,7 @@ import {
 } from "lucide-react"
 import TransactionStatusPill from "@/components/transaction-status-pill"
 import Modal from "@/components/modal"
-import DepositCancelForm from "@/components/deposit/cancel-deposit-form"
+import TransactionCancelForm from "@/components/transaction/transaction-cancel-form"
 
 const TransactionsTable = () => {
 
@@ -53,7 +53,7 @@ const TransactionsTable = () => {
 
     } catch (error: any) {
 
-      console.log('[ERROR]: ❌ onSubmit\n', error)
+      console.log('[ERROR]: ❌ getAllTransactions\n', error)
       let errorMsg = "Falha ao listar transferências. Relate ao suporte."
 
       if (error.response?.data.msg) {
@@ -289,8 +289,8 @@ const TransactionsTable = () => {
                 setShow={setShowModalCancel}
                 size="sm"
               >
-                <DepositCancelForm
-                  depositId={itemIdActive}
+                <TransactionCancelForm
+                  transactionId={itemIdActive}
                   handleSubmitSuccess={() => {
                     getData()
                     setShowModalCancel(false)

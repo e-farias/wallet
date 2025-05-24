@@ -15,3 +15,8 @@ export const getAllTransactions = async (params: GetAllTransactionsParams) => {
 
   return data as TransactionsTableData
 }
+
+export const cancelTransaction = async (transactionId: string) => {
+  const endPoint = `/transaction/${transactionId}`
+  await apiPayments.delete(endPoint)
+}

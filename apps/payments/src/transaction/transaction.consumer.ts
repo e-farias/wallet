@@ -19,5 +19,8 @@ export class TransactionConsumer extends WorkerHost {
     if (job.name == jobNames.transaction.create) {
       return await this.transactionService.create(job.data)
     }
+    if (job.name == jobNames.transaction.cancel) {
+      return await this.transactionService.cancel(job.data)
+    }
   }
-}
+} 

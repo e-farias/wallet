@@ -14,7 +14,6 @@
     "build:packages": "pnpm build",
     "db:update": "dotenv -e ../../.env -- prisma db push && pnpm run build",
     "db:studio": "dotenv -e ../../.env -- prisma studio",
-    "db:reset": "dotenv -e ../../.env -- pnpm run db:update --force-reset",
     "query": "npx ts-node --compiler-options {'\"module\":\"CommonJS\"'} src/query.ts",
     "format": "prisma format",
     "generate": "prisma generate",

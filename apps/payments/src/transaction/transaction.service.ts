@@ -1,14 +1,15 @@
 import {
   Injectable,
   BadRequestException,
-  NotFoundException
+  NotFoundException,
+  UnauthorizedException
 } from "@nestjs/common"
 import { PrismaService } from "@/prisma/prisma.service"
-import { CreateParams, GetAllParams } from "./transaction.types"
+import { CreateParams, GetAllParams, CancelParams } from "./transaction.types"
 import { convertMoneyStrToNumber } from "@repo/lib/utils/currency"
 import { TransactionStatus, Prisma } from "@repo/database"
 import { take, getSkip } from "@repo/lib"
-import { Transaction } from "@repo/lib/types/transaction"
+import { transactionIsReversible } from "@repo/lib/schemas/common"
 
 @Injectable()
 export class TransactionService {
@@ -39,7 +40,7 @@ export class TransactionService {
     }
 
     if (sender.wallet.balance < amount) {
-      throw new BadRequestException({ msg: 'Saldo insulficiente' })
+      throw new BadRequestException({ msg: 'Saldo insuficiente' })
     }
 
     const receiver = await this.prisma.user.findUnique({
@@ -146,6 +147,94 @@ export class TransactionService {
       total,
       items
     }
+  }
+
+  async cancel(params: CancelParams) {
+
+    const transaction = await this.prisma.transaction.findUnique({
+      where: { id: params.transactionId },
+      select: {
+        sender: {
+          select: {
+            id: true,
+            wallet: {
+              select: {
+                balance: true
+              }
+            }
+          }
+        },
+        receiver: {
+          select: {
+            id: true,
+            wallet: {
+              select: {
+                balance: true
+              }
+            }
+          }
+        },
+        amount: true,
+        status: true,
+      }
+    })
+
+    if (!transaction) {
+      throw new NotFoundException({
+        msg: "Essa transação não existe"
+      })
+    }
+
+    if (transaction.sender.id !== params.userId) {
+      throw new UnauthorizedException({
+        msg: "Você não tem acesso aos dados dessa transação"
+      })
+    }
+
+    if (!transactionIsReversible(transaction.status)) {
+      throw new BadRequestException({
+        msg: "Não é possível estornar essa transação"
+      })
+    }
+
+    const receiverBalance = transaction.receiver.wallet.balance - transaction.amount
+
+    if (receiverBalance < 0) {
+      throw new BadRequestException({
+        msg: "Não é possível estornar essa transação devido ao saldo"
+      })
+    }
+
+    await this.prisma.$transaction(async (tx) => {
+
+      const updatedAt = new Date()
+      const senderBalance = transaction.sender.wallet.balance + transaction.amount
+
+      await tx.transaction.update({
+        where: { id: params.transactionId },
+        data: {
+          status: TransactionStatus.REVERSED,
+          updatedAt
+        }
+      })
+
+      await tx.wallet.update({
+        where: { userId: transaction.sender.id },
+        data: {
+          balance: senderBalance,
+          updatedAt
+        }
+      })
+
+      await tx.wallet.update({
+        where: { userId: transaction.receiver.id },
+        data: {
+          balance: receiverBalance,
+          updatedAt
+        }
+      })
+
+    })
   }
 
 }

@@ -9,3 +9,8 @@ export type GetAllParams = {
   userId: string
   page: number
 }
+
+export type CancelParams = {
+  userId: string
+  transactionId: string
+}
