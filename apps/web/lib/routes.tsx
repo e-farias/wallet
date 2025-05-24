@@ -22,7 +22,7 @@ export const getRoutes = () => {
       icon: <Wallet className='w-5 h-5' />
     },
     {
-      label: 'Transferências',
+      label: 'Transações',
       path: "/wallet/transactions",
       icon: <ArrowLeftRight className='w-5 h-5' />
     },

@@ -9,7 +9,7 @@ export default function Page() {
     <div className="w-full grid gap-2 p-4">
 
       <PageHeader>
-        <span>Transferências</span>
+        <span>Transações</span>
       </PageHeader>
 
       <div className="flex flex-col w-full py-4 gap-4">

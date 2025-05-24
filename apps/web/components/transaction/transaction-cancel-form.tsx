@@ -32,7 +32,7 @@ export default function TransactionCancelForm({
     } catch (error: any) {
 
       console.log('[ERROR]: ❌ cancelTransaction\n', error)
-      let errorMsg = "Falha ao cancelar transferência."
+      let errorMsg = "Falha ao cancelar transação."
 
       if (error.response?.data.msg) {
         errorMsg = error.response?.data.msg
@@ -50,7 +50,7 @@ export default function TransactionCancelForm({
     >
       <div className="w-full flex mb-12">
         <p className='text-center font-bold text-xl'>
-          Tem certeza que deseja cancelar essa transferência?
+          Tem certeza que deseja cancelar essa transação?
         </p>
       </div>
 
@@ -76,7 +76,7 @@ export default function TransactionCancelForm({
             zoom={2}
           />
         ) : (
-          <p>Cancelar Transferência</p>
+          <p>Cancelar transação</p>
         )}
       </Button>
 

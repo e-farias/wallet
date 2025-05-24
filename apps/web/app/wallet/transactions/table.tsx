@@ -54,7 +54,7 @@ const TransactionsTable = () => {
     } catch (error: any) {
 
       console.log('[ERROR]: ❌ getAllTransactions\n', error)
-      let errorMsg = "Falha ao listar transferências. Relate ao suporte."
+      let errorMsg = "Falha ao listar transações. Relate ao suporte."
 
       if (error.response?.data.msg) {
         errorMsg = error.response?.data.msg

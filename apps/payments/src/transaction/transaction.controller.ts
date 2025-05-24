@@ -51,7 +51,7 @@ export class TransactionController {
 
     if (email == params.receiverEmail) {
       throw new BadRequestException({
-        msg: "Selecione uma conta diferente da sua para criar uma transferência."
+        msg: "Selecione uma conta diferente da sua para criar uma transação."
       })
     }
 

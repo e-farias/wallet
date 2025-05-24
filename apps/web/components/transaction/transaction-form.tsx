@@ -46,7 +46,7 @@ const TransactionForm = () => {
 
       await createTransaction(data)
 
-      toast.success("Transferência agendada com sucesso!")
+      toast.success("Transação agendada com sucesso!")
       setTimeout(() => {
         window.location.reload()
       }, 1500)
@@ -54,7 +54,7 @@ const TransactionForm = () => {
     } catch (error: any) {
       console.log('[ERROR] ❌ createTransaction\n', error)
       
-      let errorMsg = "Erro ao criar transferência. Relate ao suporte e tente novamente mais tarde."
+      let errorMsg = "Erro ao criar transação. Relate ao suporte e tente novamente mais tarde."
       if (error.response?.data.msg) {
         errorMsg = error.response?.data.msg
       }
